@@ -1,0 +1,13 @@
+.flex-box {
+    display: flex;
+    border: 2px solid red;
+}
+
+.first-col {
+    width: 80%;
+}
+
+.second-col {
+    border: 2px solid blue;
+    flex: 1;
+}
