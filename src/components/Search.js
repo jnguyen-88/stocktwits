@@ -1,35 +1,53 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Field, reduxForm } from 'redux-form';
 
 import SearchedSymbolList from './SearchedSymbolList';
-import { fetchPosts, searchStock, followSymbol } from '../actions';
+import { fetchPosts, searchStock } from '../actions';
 
 export class Search extends React.Component {
-  onChange = e => {
-    this.props.searchStock(e.target.value);
+  renderError = ({ error, touched }) => {
+    if (touched && error) {
+      return (
+        <div className='alert alert-danger' role='alert'>
+          {error}
+        </div>
+      );
+    }
   };
 
-  onSubmit = e => {
-    e.preventDefault();
-    this.props.fetchPosts(this.props.symbol);
+  // Show Redux-Form Input
+  renderInput = ({ input, meta }) => {
+    return (
+      <React.Fragment>
+        <div className='form-group'>
+          <input
+            {...input}
+            autoComplete='off'
+            placeholder='Search Symbol (e.g AAPL)'
+            className='form-control'
+          />
+        </div>
+        {this.renderError(meta)}
+      </React.Fragment>
+    );
+  };
+
+  onSubmit = formValues => {
+    console.log(formValues);
+    this.props.fetchPosts(formValues.search);
+    this.props.searchStock(formValues.search);
     document.getElementById('search-form').reset();
   };
 
   render() {
     return (
       <React.Fragment>
-        <form onSubmit={this.onSubmit} id='search-form'>
-          <div className='form-group'>
-            <input
-              type='text'
-              className='form-control'
-              name='searchText'
-              placeholder='Search Symbol'
-              autoComplete='off'
-              onChange={this.onChange}
-            />
-            <button>Submit</button>
-          </div>
+        <form
+          onSubmit={this.props.handleSubmit(this.onSubmit)}
+          id='search-form'
+        >
+          <Field name='search' component={this.renderInput} />
         </form>
         <SearchedSymbolList />
       </React.Fragment>
@@ -37,11 +55,21 @@ export class Search extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  symbol: state.stocks.symbol
-});
+const validate = formValues => {
+  const errors = {};
+
+  if (!formValues.search) {
+    errors.search = 'You must enter a symbol';
+  }
+  return errors;
+};
+
+const formWrapped = reduxForm({
+  form: 'search',
+  validate
+})(Search);
 
 export default connect(
-  mapStateToProps,
-  { fetchPosts, searchStock, followSymbol }
-)(Search);
+  null,
+  { fetchPosts, searchStock }
+)(formWrapped);

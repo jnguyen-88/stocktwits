@@ -7,73 +7,36 @@ export class AddCard extends React.Component {
     return this.props.searched.map(symbol => {
       return (
         <div key={symbol}>
-          <li>{symbol}</li>
           <button
+            type='button'
+            className='btn btn-info'
             onClick={() => {
               this.props.followSymbol(symbol);
-              this.props.removeSearchedSymbol(symbol);
+              if (this.props.followedSymbols.length > 0) {
+                this.props.unfollowSymbol(symbol);
+              }
             }}
           >
-            Add
+            {symbol}
           </button>
-          {/* <button
-            onClick={() => {
-              this.props.unfollowSymbol(symbol);
-            }}
-          >
-            Remove
-          </button> */}
         </div>
       );
     });
   };
   render() {
     if (this.props.searched.length === 0) {
-      return <div>Nothing searched</div>;
+      return null;
     }
-    return <div className='second-col'>{this.renderSymbol()}</div>;
+    return this.renderSymbol();
   }
 }
 
 const mapStateToProps = state => ({
-  searched: state.stocks.searchedSymbols
+  searched: state.stocks.searchedSymbols,
+  followedSymbols: state.stocks.followedSymbols
 });
 
 export default connect(
   mapStateToProps,
   { followSymbol, removeSearchedSymbol, unfollowSymbol }
 )(AddCard);
-
-//=======Whats wrong with this?=======
-
-// export class AddCard extends React.Component {
-//   onAdd = sym => {
-//     this.props.followSymbol(sym);
-//     this.props.removeSearchedSymbol(sym);
-//   };
-//   renderSymbol = () => {
-//     return this.props.searched.map(symbol => {
-//       return (
-//         <div key={symbol}>
-//           <li>{symbol}</li>
-//           <button onClick={this.onAdd(symbol)}>Add</button>
-//         </div>
-//       );
-//     });
-//   };
-//   render() {
-//     if (!this.props.searched) {
-//       return <div>Nothing searched</div>;
-//     }
-//     return <div className='second-col'>{this.renderSymbol()}</div>;
-//   }
-// }
-
-// const mapStateToProps = state => ({
-//   searched: state.stocks.searchedSymbols
-// });
-
-// export default connect(
-//   mapStateToProps,
-//   { followSymbol, removeSearchedSymbol }
-// )(AddCard);

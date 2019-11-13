@@ -5,7 +5,17 @@ import AddCard from './AddCard';
 
 class SearchedSymbolList extends Component {
   render() {
-    return <AddCard />;
+    if (this.props.searched.length > 0) {
+      return (
+        <div className='searched-box'>
+          <span>Click a symbol to save to your Watchlist</span>
+          <div>
+            <AddCard />
+          </div>
+        </div>
+      );
+    }
+    return null;
   }
 }
 
@@ -13,7 +23,3 @@ const mapStateToProps = state => ({
   searched: state.stocks.searchedSymbols
 });
 export default connect(mapStateToProps)(SearchedSymbolList);
-
-// const symbols = this.props.searched.map(sym => {
-//   return <span>{sym}</span>;
-// });
